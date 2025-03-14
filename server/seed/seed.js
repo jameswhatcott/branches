@@ -4,9 +4,10 @@ const path = require('path'); // Import the path module
 
 async function seedDatabase() {
   // Connect to the database
-  // await mongoose.connect('mongodb://localhost:27017/genealogyDB', { //localhost
-  await mongoose.connect('mongodb+srv://matthewwilliamscmh:dkMHT0LdTCiANuAf@@branches.qprf8.mongodb.net/genealogyDB?retryWrites=true&w=majority&appName=Branches');
-
+  await mongoose.connect('mongodb://localhost:27017/genealogyDB', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  });
   const connection = mongoose.connection; // Get the connection object
   let personsCheck = await connection.db.listCollections({ name: 'people' }).toArray();
   	if (personsCheck.length) {

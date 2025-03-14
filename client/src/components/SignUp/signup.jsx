@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { SIGNUP_MUTATION } from '../../utils/mutations';
 import { useMutation } from '@apollo/client';
-import Auth from '../../utils/auth'
-import {Navigate} from 'react-router-dom'
-import './signup.css'
+import Auth from '../../utils/auth';
+import { Navigate, useNavigate } from 'react-router-dom'; // Use useNavigate instead of Navigate component
+import './signup.css';
 
 const SignupForm = () => {
   const [name, setName] = useState('');
@@ -11,13 +11,13 @@ const SignupForm = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null); // For error messages
   const [message, setMessage] = useState(''); // For success message
-  const [signUp] = useMutation(SIGNUP_MUTATION)
-
+  const [signUp] = useMutation(SIGNUP_MUTATION);
+  const navigate = useNavigate(); // Hook to programmatically navigate
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Basic validation (can be expanded)
+    // Basic client-side validation
     if (!name || !email || !password) {
       setError('All fields are required');
       return;
@@ -25,22 +25,28 @@ const SignupForm = () => {
 
     try {
       const signUpResponse = await signUp({
-        variables:{
-          name:name,
-          email:email,
-          password:password
-        }
-      })
-     
-      const token = signUpResponse.data.signup.token
-      Auth.login(token)
+        variables: {
+          name: name,
+          email: email,
+          password: password,
+        },
+      });
 
-      setTimeout(()=>{
-        Navigate('/Tree')
-      }, 2000)
+      const token = signUpResponse.data.signup.token;
+      Auth.login(token);
+
+      setMessage('Sign-up successful! Redirecting...');
+      setError(null); // Clear any previous errors
+
+      setTimeout(() => {
+        navigate('/Tree'); // Use navigate instead of Navigate component
+      }, 2000);
     } catch (error) {
-      console.log(error)
-      setError(error.message); // Set error message if sign-up fails
+      console.log(error);
+      // Extract the specific validation error message from the GraphQL error
+      const errorMessage = error.graphQLErrors?.[0]?.message || error.message;
+      setError(errorMessage); // Display the server's error message
+      setMessage(''); // Clear success message if there was one
     }
   };
 
@@ -49,29 +55,33 @@ const SignupForm = () => {
       <h3>Sign Up</h3>
       {error && <p style={{ color: 'red' }}>{error}</p>} {/* Display error message */}
       {message && <p style={{ color: 'green' }}>{message}</p>} {/* Display success message */}
-      
+
       <input
-        type='text'
+        type="text"
         value={name}
         onChange={(e) => setName(e.target.value)}
-        placeholder='Name'
+        placeholder="Name"
         required
       />
       <input
-        type='email'
+        type="email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        placeholder='Email'
+        placeholder="Email"
         required
       />
       <input
-        type='password'
+        type="password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
-        placeholder='Password'
+        placeholder="Password"
         required
       />
-      <button type='submit'>Sign Up</button>
+      {/* Add password requirements hint */}
+      <p style={{ fontSize: '0.8em', color: '#555' }}>
+        Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number, and one special character.
+      </p>
+      <button type="submit">Sign Up</button>
     </form>
   );
 };
