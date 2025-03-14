@@ -1,0 +1,47 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #065f46;
+    color: white; 
+    padding: 15px 30px; 
+    position: relative;
+    width: 100%; 
+    z-index: 1000;
+  }
+
+  .header img {
+    width: 50px; 
+    height: auto;
+    margin-right: 15px; 
+    
+}
+
+.header div {
+    font-size: 24px; 
+    font-weight: bold; 
+}
+.signout-btn {
+    background-color: #0d32a6; 
+    color: white;              
+    border: none;              
+    padding: 10px 20px;        
+    border-radius: 5px;        
+    cursor: pointer;          
+    transition: background-color 0.3s ease; 
+}
+
+.signout-btn:hover {
+    background-color: #960da6; 
+}
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column; /* Stack items on smaller screens */
+        align-items: flex-start; /* Align items to the left */
+    }
+}
+
+.header div:hover {
+    color: #007BFF; /* Change text color on hover */
+    cursor: pointer; /* Change cursor on hover */
+}
